@@ -10,11 +10,12 @@ extern distance DistanceSensor;
 extern motor topHook;
 extern motor leftHook;
 extern motor backHook;
-
 extern motor leftMotorA;
 extern motor leftMotorB;
 extern motor rightMotorA;
 extern motor rightMotorB;
+extern bumper leftBumper;
+extern bumper backBumper;
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.
  * 

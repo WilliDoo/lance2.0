@@ -26,7 +26,9 @@ distance DistanceSensor = distance(PORT19);
 motor topHook = motor(PORT2, ratio18_1, false);
 motor leftHook = motor(PORT14, ratio18_1, true);
 motor backHook = motor(PORT8, ratio18_1, false);
-
+//back F left G
+bumper leftBumper = bumper(Brain.ThreeWirePort.G);
+bumper backBumper = bumper(Brain.ThreeWirePort.F);
 // VEXcode generated functions
 // define variable for remote controller enable/disable
 bool RemoteControlCodeEnabled = true;
@@ -92,10 +94,10 @@ int rc_auto_loop_function_Controller1() {
       sabs = ((sabs < 5)? 0:(sabs < 10)? sabs:(sabs<50)? 10: (sabs<90)? 50: 100) * ssign;
       stabs = ((stabs < 5)? 0:(stabs < 10)? stabs:(stabs<50)? 10: (sabs<90)? 50: 100) * stsign;
       rabs = ((rabs < 5)? 0:(stabs < 10)? stabs:(rabs<50)? 10:(rabs<90)? 50:100) * rsign;
-      drivetrainLeftMotorASpeed = straight + rotate + sideways;   
-      drivetrainLeftMotorBSpeed = straight + rotate - sideways;   
-      drivetrainRightMotorASpeed =  straight - rotate - sideways;
-      drivetrainRightMotorBSpeed =  straight - rotate + sideways;
+      drivetrainLeftMotorASpeed = straight + rotate - sideways;   
+      drivetrainLeftMotorBSpeed = straight + rotate + sideways;   
+      drivetrainRightMotorASpeed =  straight - rotate + sideways;
+      drivetrainRightMotorBSpeed =  straight - rotate - sideways;
       int drivetrainHeading = Drivetrain.heading();
       if (drivetrainHeading > 45) {
         std::swap(drivetrainRightMotorASpeed, drivetrainLeftMotorASpeed);
@@ -104,7 +106,7 @@ int rc_auto_loop_function_Controller1() {
       } else if (drivetrainHeading > 135) {
         std::swap(drivetrainLeftMotorASpeed, drivetrainRightMotorBSpeed);
         std::swap(drivetrainLeftMotorBSpeed, drivetrainRightMotorASpeed);
-      } else if (drivetrainHeading > 225) {
+      } else if (drivetrainHeading > 225 && drivetrainHeading < 315) {
         std::swap(drivetrainRightMotorASpeed, drivetrainLeftMotorASpeed);
         std::swap(drivetrainRightMotorASpeed, drivetrainLeftMotorASpeed);
         std::swap(drivetrainRightMotorASpeed, drivetrainRightMotorBSpeed);
@@ -208,6 +210,7 @@ void vexcodeInit(void) {
   // calibrate the drivetrain Inertial
   wait(200, msec);
   DrivetrainInertial.calibrate();
+  Drivetrain.setHeading(0, rotationUnits::deg);
   Brain.Screen.print("Calibrating Inertial for Drivetrain");
   // wait for the Inertial calibration process to finish
   while (DrivetrainInertial.isCalibrating()) {

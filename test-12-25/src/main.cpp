@@ -29,47 +29,38 @@ int auton = 0;
 int selection = -1;
 std::string txt = "awp\nrings";
 
-void scr(int shift) { // shift is 1 or -1
-  auton = (auton + shift) % 9;
-  txt = (auton == 0)? "awp\nrings": (auton == 1)? "seesaw\nrings": (auton == 2)? "awp\nrush": (auton == 3)? "rush\nawp"
-  : (auton == 4)? "awp\nelim": (auton == 5)? "seesaw\nrush": (auton == 6)? "solo": (auton == 7)? "seesaw\nelim": "skills";
-}
-void drawTask(int side) {
-  if (side == 0) { 
+
+void scr() { // shift is 1 or -1
+  while (selection == -1){
     Brain.Screen.clearScreen();
     Brain.Screen.setFillColor(red);
-    Brain.Screen.drawRectangle(0, 0, 240, 120);
-    Brain.Screen.setCursor(3, 8);
+    Brain.Screen.drawRectangle(0, 120, 200, 120);
     Brain.Screen.setPenColor(white);
-    Brain.Screen.print("Rings");
-    Brain.Screen.drawRectangle(240, 0, 240, 120);
-    Brain.Screen.setCursor(3, 32);
-    Brain.Screen.print("Rush 1");
-    Brain.Screen.drawRectangle(0, 120, 240, 120);
-    Brain.Screen.setCursor(10, 8);
-    Brain.Screen.print("Rush 2");
-    Brain.Screen.drawRectangle(240, 120, 240, 120);
-    Brain.Screen.setCursor(10, 32);
-    Brain.Screen.print("Skills");
-  } else {
-    Brain.Screen.clearScreen();
-    Brain.Screen.setFillColor(red);
-    Brain.Screen.drawRectangle(0, 0, 240, 120);
-    Brain.Screen.setCursor(3, 8);
-    Brain.Screen.setPenColor(white);
-    Brain.Screen.print("Rings");
-    Brain.Screen.drawRectangle(240, 0, 240, 120);
-    Brain.Screen.setCursor(3, 32);
-    Brain.Screen.print("Solo");
-    Brain.Screen.drawRectangle(0, 120, 240, 120);
-    Brain.Screen.setCursor(10, 8);
-    Brain.Screen.print("Rush 1");
-    Brain.Screen.drawRectangle(240, 120, 240, 120);
-    Brain.Screen.setCursor(10, 32);
-    Brain.Screen.print("Rush 2");  
+    Brain.Screen.printAt(23, 144, false, "Next");
+    Brain.Screen.drawRectangle(280, 120, 200, 120);
+    Brain.Screen.printAt(300, 144, false, "%s", txt.c_str());
+    while (!(Brain.Screen.pressing())) {}
+    int x = Brain.Screen.xPosition();
+    int y = Brain.Screen.yPosition();  
+    if (x > 0 && x < 200 && y > 120 && y < 240) {
+      auton = (auton + 1) % 9;
+      txt = (auton == 0)? "awp\nrings": (auton == 1)? "seesaw\nrings": (auton == 2)? "awp\nrush": (auton == 3)? "rush\nawp"
+      : (auton == 4)? "awp\nelim": (auton == 5)? "seesaw\nrush": (auton == 6)? "solo": (auton == 7)? "seesaw\nelim": "skills";
+      while (Brain.Screen.pressing()){}
+      continue;
+    } else if (x > 280 && x < 480 && y > 120  && y < 240) {
+      selection = auton;
+      Brain.Screen.clearScreen();
+      break;
+    } else {
+      while (Brain.Screen.pressing()){}
+
+      continue;
+    }
   }
 }
-void menu() {
+void drawTask() {
+
 }
 void strafe(vex::directionType myDirection, float distance, float speed) {
   float numberDeg;
@@ -261,9 +252,19 @@ void skills() {
   toggleBackHook();
   Drivetrain.driveFor(68, distanceUnits::in);
 }
+void pre_auton(void) {
+
+}
+void autonomousRunner(void) {
+
+}
+void usercontrol(void) {
+  
+}
 int main() {
   // Initializing Robot Configuration. DO NOT REMOVE!
   vexcodeInit();
+  scr();
   arm.setStopping(hold);
   backHook.setStopping(hold);
   leftHook.setStopping(hold);
@@ -286,4 +287,9 @@ int main() {
   Controller1.ButtonB.pressed(toggleBackHook);
   Controller1.ButtonUp.pressed(awpRushAggressive);
   Controller1.ButtonDown.pressed(awpRushSafe);
+  leftBumper.pressed(toggleLeftHook);
+  backBumper.pressed(toggleBackHook);
+  while (true) {
+    wait(100, timeUnits::msec);
+  }
 }
